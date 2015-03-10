@@ -36,6 +36,7 @@
       </libraryPathEntry>
       <libraryPathEntry kind="1" linkType="1" path="RobtoLegs/lib"/>
       <libraryPathEntry kind="3" linkType="1" path="lib/AsWing.swc" useDefaultLinkType="false"/>
+      <libraryPathEntry kind="3" linkType="1" path="lib/bulk_loader.swc" useDefaultLinkType="false"/>
     </libraryPath>
     <sourceAttachmentPath/>
   </compiler>
@@ -49,7 +50,7 @@
   <flashCatalyst validateFlashCatalystCompatibility="false"/>
   <buildTargets>
     <buildTarget buildTargetName="default">
-      <airSettings airCertificatePath="" airTimestamp="true" anePathSet="false" version="1">
+      <airSettings airCertificatePath="" airTimestamp="true" anePathSet="true" version="1">
         <airExcludes/>
         <anePaths/>
       </airSettings>
@@ -57,4 +58,3 @@
     </buildTarget>
   </buildTargets>
 </actionScriptProperties>
-

@@ -1,5 +1,8 @@
 package
 {
+	import Camera.CameraManager;
+	import Camera.CameraType;
+	
 	import away3d.containers.View3D;
 	import away3d.core.managers.Stage3DManager;
 	import away3d.core.managers.Stage3DProxy;
@@ -8,6 +11,9 @@ package
 	import away3d.lights.DirectionalLight;
 	import away3d.materials.lightpickers.LightPickerBase;
 	import away3d.materials.lightpickers.StaticLightPicker;
+	
+	import core.AshExtension;
+	import core.Config;
 	
 	import flash.display.Sprite;
 	import flash.display.Stage;
@@ -25,12 +31,12 @@ package
 	import robotlegs.bender.framework.api.IContext;
 	import robotlegs.bender.framework.impl.Context;
 	
-	import robotlegscore.AshExtension;
-	import robotlegscore.Config;
-	
 	public class GameFrame extends Sprite
 	{
 		private var _context:IContext;
+		
+		private var _uiLayer:Sprite;
+		private var _gameLayer:Sprite;
 		
 		// away3d相关
 		private var _stage3DManger:Stage3DManager;
@@ -49,13 +55,16 @@ package
 		{
 			this.removeEventListener( Event.ADDED_TO_STAGE, init );
 			
+			_uiLayer = new Sprite();
+			_gameLayer = new Sprite();
+			this.addChild( _uiLayer );
+			this.addChild( _gameLayer );
+			
 			stage.align = StageAlign.TOP_LEFT;
 			stage.scaleMode = StageScaleMode.NO_SCALE;
 			stage.stageFocusRect = false;
 			
 			initContext();
-			
-			initAway3D();
 		}
 		
 		/**
@@ -64,80 +73,13 @@ package
 		private function initContext():void
 		{
 			context = new Context();
+			context.injector.map( Context ).toValue( context );
 			context.install( MVCSBundle, AshExtension );
 			context.configure( new ContextView(this) );
 			context.injector.map( GameFrame ).toValue( this );
 			context.configure( Config );
 		}
 		
-		
-		/**
-		 * 初始化away3d引擎
-		 * */
-		private function initAway3D():void
-		{
-			if( !_stage3DManger && stage )
-			{
-				_stage3DManger = Stage3DManager.getInstance( stage );
-				_stage3DProxy = _stage3DManger.getFreeStage3DProxy( false, _profile );
-				_stage3DProxy.addEventListener( Stage3DEvent.CONTEXT3D_CREATED, onContextCreated );
-				_stage3DProxy.antiAlias = 0;
-			}
-			else
-			{
-				onContextCreated( null );
-			}
-		}
-
-		
-		/**
-		 * 创建完成真正开始初始化
-		 * */
-		private function onContextCreated(e:Stage3DEvent):void
-		{
-			_stage3DProxy.removeEventListener( Stage3DEvent.CONTEXT3D_CREATED, onContextCreated );
-			
-			
-			if( _view )
-			{
-				_view.dispose();
-				_view = null;
-			}
-			
-			_view = new View3D( null, null, null, false, _profile );
-			_view.stage3DProxy = _stage3DProxy;	
-			stage.addChild( _view );
-			onResize(null);
-			
-			_view.camera.lens.far = 10000;
-			_view.camera.lens.near = 1;
-			_view.camera.y = 300;
-			
-			
-			_mainLight = new DirectionalLight(300, -300, -5000);
-			_mainLight.color = 0xfffdc5;
-			_mainLight.ambient = 1;
-			_view.scene.addChild(_mainLight);
-			
-			var t:Trident = new Trident( 500 );
-			t.x = -50;	t.y =290; t.z = -1000;
-			_view.scene.addChild( t );
-			
-			_mainLightPick = new StaticLightPicker( [_mainLight] );
-		}
-		
-		
-		/**
-		 * 舞台大小发生变化
-		 * */
-		private function onResize(e:Event):void
-		{
-			if( this._view )
-			{
-				this._view.width = this.stage.stageWidth;
-				this._view.height = this.stage.stageHeight;
-			}
-		}
 		
 		public function get context():IContext
 		{
@@ -167,6 +109,66 @@ package
 		public function set mainLight(value:DirectionalLight):void
 		{
 			_mainLight = value;
+		}
+
+		public function get uiLayer():Sprite
+		{
+			return _uiLayer;
+		}
+
+		public function set uiLayer(value:Sprite):void
+		{
+			_uiLayer = value;
+		}
+
+		public function get gameLayer():Sprite
+		{
+			return _gameLayer;
+		}
+
+		public function set gameLayer(value:Sprite):void
+		{
+			_gameLayer = value;
+		}
+
+		public function get stage3DManger():Stage3DManager
+		{
+			return _stage3DManger;
+		}
+
+		public function set stage3DManger(value:Stage3DManager):void
+		{
+			_stage3DManger = value;
+		}
+
+		public function get profile():String
+		{
+			return _profile;
+		}
+
+		public function set profile(value:String):void
+		{
+			_profile = value;
+		}
+
+		public function get stage3DProxy():Stage3DProxy
+		{
+			return _stage3DProxy;
+		}
+
+		public function set stage3DProxy(value:Stage3DProxy):void
+		{
+			_stage3DProxy = value;
+		}
+
+		public function get mainLightPick():LightPickerBase
+		{
+			return _mainLightPick;
+		}
+
+		public function set mainLightPick(value:LightPickerBase):void
+		{
+			_mainLightPick = value;
 		}
 
 
